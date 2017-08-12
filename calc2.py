@@ -49,6 +49,10 @@ class Interpreter(object):
         else:
             self.current_char = self.text[self.pos]
 
+    def skip_whitespace(self):
+        while self.current_char is not None and self.current_char.isspace():
+            self.advance()
+
     def assembleInteger(self):
         result = ''
         while self.current_char is not None and self.current_char.isdigit():
@@ -63,6 +67,8 @@ class Interpreter(object):
         apart into tokens. One token at a time.
         """
         while self.current_char is not None:
+            if self.current_char.isspace():
+                self.skip_whitespace()
             if self.current_char.isdigit():
                 return Token(INTEGER, self.assembleInteger())
             if self.current_char == '+':
