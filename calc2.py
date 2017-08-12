@@ -18,6 +18,7 @@ class Token(object):
         Examples:
             Token(INTEGER, 3)
             Token(PLUS '+')
+            Token(MINUS '-')
         """
         return 'Token({type}, {value})'.format(
             type=self.type,
@@ -36,9 +37,24 @@ class Interpreter(object):
         self.pos = 0
         # current token instance
         self.current_token = None
+        self.current_char = self.text[self.pos]
 
     def error(self):
         raise Exception('Error parsing input')
+
+    def advance(self):
+        self.pos +=1
+        if self.pos > len(self.text) - 1:
+            self.current_char = None
+        else:
+            self.current_char = self.text[self.pos]
+
+    def assembleInteger(self):
+        result = ''
+        while self.current_char is not None and self.current_char.isdigit():
+            result += self.current_char
+            self.advance()
+        return int(result)
 
     def get_next_token(self):
         """Lexical analyzer (also known as scanner or tokenizer)
@@ -46,36 +62,14 @@ class Interpreter(object):
         This method is responsible for breaking a sentence
         apart into tokens. One token at a time.
         """
-        text = self.text
-
-        # is self.pos index past the end of the self.text ?
-        # if so, then return EOF token because there is no more
-        # input left to convert into tokens
-        if self.pos > len(text) - 1:
-            return Token(EOF, None)
-
-        # get a character at the position self.pos and decide
-        # what token to create based on the single character
-        current_char = text[self.pos]
-
-        # if the character is a digit then convert it to
-        # integer, create an INTEGER token, increment self.pos
-        # index to point to the next character after the digit,
-        # and return the INTEGER token
-        left_token = ''
-
-        while current_char.isdigit():
-            left_token += current_char
-            self.pos += 1
-        token = Token(INTEGER, int(current_char))
-        return token
-
-        if current_char == '+':
-            token = Token(PLUS, current_char)
-            self.pos += 1
-            return token
-
-        self.error()
+        while self.current_char is not None:
+            if self.current_char.isdigit():
+                return Token(INTEGER, self.assembleInteger())
+            if self.current_char == '+':
+                self.advance()
+                return Token(PLUS, '+')
+            self.error()
+        return Token(EOF, None)
 
     def eat(self, token_type):
         # compare the current token type with the passed token
@@ -88,7 +82,10 @@ class Interpreter(object):
             self.error()
 
     def expr(self):
-        """expr -> INTEGER PLUS INTEGER"""
+        """expr -> INTEGER PLUS INTEGER
+         or
+           expr -> INTEGER MINUS INTEGER
+        """
         # set current token to the first token taken from the input
         self.current_token = self.get_next_token()
 
@@ -117,17 +114,16 @@ class Interpreter(object):
 def main():
     while True:
         try:
-            try:
-                text = raw_input('calc> ')
-            except NameError:  # Python3
-                text = input('calc> ')
+            # To run under Python3 replace 'raw_input' call
+            # with 'input'
+            text = raw_input('calc> ')
         except EOFError:
             break
         if not text:
             continue
         interpreter = Interpreter(text)
         result = interpreter.expr()
-        print(result)
+        print result
 
 
 if __name__ == '__main__':
