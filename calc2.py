@@ -2,8 +2,7 @@
 #
 # EOF (end-of-file) token is used to indicate that
 # there is no more input left for lexical analysis
-INTEGER, PLUS, MINUS, EOF = 'INTEGER', 'PLUS', 'MINUS', 'EOF'
-
+INTEGER, PLUS, MINUS, MULTIPLY, DIVIDE, EOF = 'INTEGER', 'PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'EOF'
 
 class Token(object):
     def __init__(self, type, value):
@@ -40,7 +39,7 @@ class Interpreter(object):
         self.current_char = self.text[self.pos]
 
     def error(self):
-        raise Exception('Error parsing input')
+        raise Exception('Experienced an error while parsing input')
 
     def advance(self):
         self.pos +=1
@@ -77,6 +76,12 @@ class Interpreter(object):
             if self.current_char == '-':
                 self.advance()
                 return Token(MINUS, '-')
+            if self.current_char == '*':
+                self.advance()
+                return Token(MULTIPLY, '*')
+            if self.current_char == '/':
+                self.advance()
+                return Token(DIVIDE, '/')
             self.error()
         return Token(EOF, None)
 
@@ -92,8 +97,9 @@ class Interpreter(object):
 
     def expr(self):
         """expr -> INTEGER PLUS INTEGER
-         or
            expr -> INTEGER MINUS INTEGER
+           expr -> INTEGER MULTIPLY INTEGER
+           expr -> INTEGER DIVIDE INTEGER
         """
         # set current token to the first token taken from the input
         self.current_token = self.get_next_token()
@@ -108,6 +114,10 @@ class Interpreter(object):
             self.eat(PLUS)
         if op.type == MINUS:
             self.eat(MINUS)
+        if op.type == MULTIPLY:
+            self.eat(MULTIPLY)
+        if op.type == DIVIDE:
+            self.eat(DIVIDE)
 
         # we expect the current token to be a single-digit integer
         right = self.current_token
@@ -123,6 +133,10 @@ class Interpreter(object):
             result = left.value + right.value
         if op.type == MINUS:
             result = left.value - right.value
+        if op.type == MULTIPLY:
+            result = left.value * right.value
+        if op.type == DIVIDE:
+            result = left.value / right.value
         return result
 
 
