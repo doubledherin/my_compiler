@@ -37,7 +37,9 @@ class Interpreter(object):
         # current token instance
         self.current_token = None
         self.current_char = self.text[self.pos]
-
+    ##########################################################
+    # Lexer code                                             #
+    ##########################################################
     def error(self):
         raise Exception('Experienced an error while parsing input')
 
@@ -52,7 +54,7 @@ class Interpreter(object):
         while self.current_char is not None and self.current_char.isspace():
             self.advance()
 
-    def assembleInteger(self):
+    def integer(self):
         result = ''
         while self.current_char is not None and self.current_char.isdigit():
             result += self.current_char
@@ -69,7 +71,7 @@ class Interpreter(object):
             if self.current_char.isspace():
                 self.skip_whitespace()
             if self.current_char.isdigit():
-                return Token(INTEGER, self.assembleInteger())
+                return Token(INTEGER, self.integer())
             if self.current_char == '+':
                 self.advance()
                 return Token(PLUS, '+')
@@ -85,6 +87,9 @@ class Interpreter(object):
             self.error()
         return Token(EOF, None)
 
+    ##########################################################
+    # Parser / Interpreter code                              #
+    ##########################################################
     def eat(self, token_type):
         # compare the current token type with the passed token
         # type and if they match then "eat" the current token
@@ -95,56 +100,38 @@ class Interpreter(object):
         else:
             self.error()
 
+
+    def term(self):
+        """Return an INTEGER token value"""
+        token = self.current_token
+        self.eat(INTEGER)
+        return token.value
+
     def expr(self):
-        """expr -> INTEGER PLUS INTEGER
-           expr -> INTEGER MINUS INTEGER
-           expr -> INTEGER MULTIPLY INTEGER
-           expr -> INTEGER DIVIDE INTEGER
-        """
-        # set current token to the first token taken from the input
+        """Parser / Intepreter"""
         self.current_token = self.get_next_token()
 
-        # we expect the current token to be a single-digit integer
-        left = self.current_token
-        self.eat(INTEGER)
-
-        # we expect the current token to be a '+' token
-        op = self.current_token
-        if op.type == PLUS:
-            self.eat(PLUS)
-        if op.type == MINUS:
-            self.eat(MINUS)
-        if op.type == MULTIPLY:
-            self.eat(MULTIPLY)
-        if op.type == DIVIDE:
-            self.eat(DIVIDE)
-
-        # we expect the current token to be a single-digit integer
-        right = self.current_token
-        self.eat(INTEGER)
-        # after the above call the self.current_token is set to
-        # EOF token
-
-        # at this point INTEGER PLUS INTEGER sequence of tokens
-        # has been successfully found and the method can just
-        # return the result of adding two integers, thus
-        # effectively interpreting client input
-        if op.type == PLUS:
-            result = left.value + right.value
-        if op.type == MINUS:
-            result = left.value - right.value
-        if op.type == MULTIPLY:
-            result = left.value * right.value
-        if op.type == DIVIDE:
-            result = left.value / right.value
+        result = self.term()
+        while self.current_token.type in (PLUS, MINUS, MULTIPLY, DIVIDE):
+            token = self.current_token
+            if token.type == PLUS:
+                self.eat(PLUS)
+                result = result + self.term()
+            elif token.type == MINUS:
+                self.eat(MINUS)
+                result = result - self.term()
+            elif token.type == MULTIPLY:
+                self.eat(MULTIPLY)
+                result = result * self.term()
+            elif token.type == DIVIDE:
+                self.eat(DIVIDE)
+                result = result / self.term()
         return result
 
 
 def main():
     while True:
         try:
-            # To run under Python3 replace 'raw_input' call
-            # with 'input'
             text = raw_input('calc> ')
         except EOFError:
             break
