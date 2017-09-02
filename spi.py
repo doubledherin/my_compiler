@@ -1,3 +1,11 @@
+""" SPI - Simple Pascal Interpreter """
+
+###############################################################################
+#                                                                             #
+#  LEXER                                                                      #
+#                                                                             #
+###############################################################################
+
 # Token types
 #
 # EOF (end-of-file) token is used to indicate that
@@ -91,71 +99,11 @@ class Lexer(object):
             self.error()
         return Token(EOF, None)
 
-
-class Interpreter(object):
-    def __init__(self, lexer):
-        self.lexer = lexer
-        self.current_token = self.lexer.get_next_token()
-    def eat(self, token_type):
-        # compare the current token type with the passed token
-        # type and if they match then "eat" the current token
-        # and assign the next token to the self.current_token,
-        # otherwise raise an exception.
-        if self.current_token.type == token_type:
-            self.current_token = self.lexer.get_next_token()
-        else:
-            self.error()
-
-    def error(self):
-        raise Exception('Invalid syntax')
-
-    def term(self):
-
-        result = self.factor()
-
-        while self.current_token.type in (MULTIPLY, DIVIDE):
-            token = self.current_token
-            if token.type == MULTIPLY:
-                self.eat(MULTIPLY)
-                result = result * self.factor()
-            elif token.type == DIVIDE:
-                self.eat(DIVIDE)
-                result = result / self.factor()
-        return result
-
-    def factor(self):
-        token = self.current_token
-        if token.type == INTEGER:
-            self.eat(INTEGER)
-            return token.value
-        elif token.type == LPAREN:
-            self.eat(LPAREN)
-            result = self.expr()
-            self.eat(RPAREN)
-            return result
-        self.eat(INTEGER)
-        return token.value
-
-    def expr(self):
-        """Arithmetic expression parser / interpreter.
-
-        calc>  14 + 2 * 3 - 6 / 2
-        17
-
-        expr   : term ((PLUS | MINUS) term)*
-        term   : factor ((MUL | DIV) factor)*
-        factor : INTEGER
-        """
-        result = self.term()
-        while self.current_token.type in (PLUS, MINUS):
-            token = self.current_token
-            if token.type == PLUS:
-                self.eat(PLUS)
-                result = result + self.term()
-            elif token.type == MINUS:
-                self.eat(MINUS)
-                result = result - self.term()
-        return result
+###############################################################################
+#                                                                             #
+#  PARSER                                                                     #
+#                                                                             #
+###############################################################################
 
 class AST(object):
     pass
@@ -218,7 +166,7 @@ class Parser(object):
         """
         node = self.term()
 
-        while self.current_token in (PLUS, MINUS):
+        while self.current_token.type in (PLUS, MINUS):
             token = self.current_token
             if token.type == PLUS:
                 self.eat(PLUS)
@@ -230,43 +178,55 @@ class Parser(object):
     def parse(self):
         return self.expr()
 
-    class NodeVisitor(object):
-        def visit(self, node):
-            method_name = 'visit_' + type(node).__name__
-            visitor = getattr(self, method_name, self.generic_visit)
-            return visitor(node)
-        def generic_visit(self, node):
-            raise Exception('No visit_{} method'.format(type(node).__name__))
 
-    class Interpreter(NodeVisitor):
-        def __init__(self, parser):
-            self.parser = parser
+###############################################################################
+#                                                                             #
+#  INTERPRETER                                                                #
+#                                                                             #
+###############################################################################
 
-        def visit_BinOp(self, node):
-            if node.op.type == PLUS:
-                return self.visit(node.left) + self.visit(node.right)
-            elif node.op.type == MINUS:
-                return self.visit(node.left) - self.visit(node.right)
-            elif node.op.type == MULTIPLY:
-                return self.visit(node.left) * self.visit(node.right)
-            elif node.op.type == DIVIDE:
-                return self.visit(node.left) / self.visit(node.right)
+class NodeVisitor(object):
+    def visit(self, node):
+        method_name = 'visit_' + type(node).__name__
+        visitor = getattr(self, method_name, self.generic_visit)
+        return visitor(node)
+    def generic_visit(self, node):
+        raise Exception('No visit_{} method'.format(type(node).__name__))
 
-        def visit_Num(self, node):
-            return node.value
+class Interpreter(NodeVisitor):
+    def __init__(self, parser):
+        self.parser = parser
+
+    def visit_BinOp(self, node):
+        if node.op.type == PLUS:
+            return self.visit(node.left) + self.visit(node.right)
+        elif node.op.type == MINUS:
+            return self.visit(node.left) - self.visit(node.right)
+        elif node.op.type == MULTIPLY:
+            return self.visit(node.left) * self.visit(node.right)
+        elif node.op.type == DIVIDE:
+            return self.visit(node.left) / self.visit(node.right)
+
+    def visit_Num(self, node):
+        return node.value
+
+    def interpret(self):
+        tree = self.parser.parse()
+        return self.visit(tree)
 
 
 def main():
     while True:
         try:
-            text = raw_input('calc> ')
+            text = raw_input('spi> ')
         except EOFError:
             break
         if not text:
             continue
         lexer = Lexer(text)
         parser = Parser(lexer)
-        result = parser.parse()
+        interpreter = Interpreter(parser)
+        result = interpreter.interpret()
         print result
 
 
