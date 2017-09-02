@@ -181,17 +181,18 @@ class Parser(object):
         raise Exception('Invalid syntax')
 
     def eat(self, token_type):
-        if self.current_token.type = token_type:
+        if self.current_token.type == token_type:
             self.current_token = self.lexer.get_next_token()
         else:
             self.error()
+
     def factor(self):
         """factor: INTEGER | LPAREN expr RPAREN"""
         token = self.current_token
-        if token.type === INTEGER:
+        if token.type == INTEGER:
             self.eat(INTEGER)
             return Num(token)
-        if token.type === LPAREN:
+        if token.type == LPAREN:
             self.eat(LPAREN)
             node = self.expr()
             self.eat(RPAREN)
@@ -223,11 +224,37 @@ class Parser(object):
                 self.eat(PLUS)
             elif token.type == MINUS:
                 self.eat(MINUS)
-            node = BinOp(left=node, op=token, right.self.term())
+            node = BinOp(left=node, op=token, right=self.term())
         return node
-        
+
     def parse(self):
         return self.expr()
+
+    class NodeVisitor(object):
+        def visit(self, node):
+            method_name = 'visit_' + type(node).__name__
+            visitor = getattr(self, method_name, self.generic_visit)
+            return visitor(node)
+        def generic_visit(self, node):
+            raise Exception('No visit_{} method'.format(type(node).__name__))
+
+    class Interpreter(NodeVisitor):
+        def __init__(self, parser):
+            self.parser = parser
+
+        def visit_BinOp(self, node):
+            if node.op.type == PLUS:
+                return self.visit(node.left) + self.visit(node.right)
+            elif node.op.type == MINUS:
+                return self.visit(node.left) - self.visit(node.right)
+            elif node.op.type == MULTIPLY:
+                return self.visit(node.left) * self.visit(node.right)
+            elif node.op.type == DIVIDE:
+                return self.visit(node.left) / self.visit(node.right)
+
+        def visit_Num(self, node):
+            return node.value
+
 
 def main():
     while True:
@@ -238,8 +265,8 @@ def main():
         if not text:
             continue
         lexer = Lexer(text)
-        interpreter = Interpreter(lexer)
-        result = interpreter.expr()
+        parser = Parser(lexer)
+        result = parser.parse()
         print result
 
 
