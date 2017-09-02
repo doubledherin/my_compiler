@@ -108,6 +108,11 @@ class Lexer(object):
 class AST(object):
     pass
 
+class UnaryOp(AST):
+    def __init__(self, op, expr):
+        self.token = self.op = op
+        self.expr = expr
+
 class BinOp(AST):
     def __init__(self, left, op, right):
         self.left = left
@@ -135,16 +140,25 @@ class Parser(object):
             self.error()
 
     def factor(self):
-        """factor: INTEGER | LPAREN expr RPAREN"""
+        """factor: (PLUS | MINUS)factor | INTEGER | LPAREN expr RPAREN"""
         token = self.current_token
         if token.type == INTEGER:
             self.eat(INTEGER)
             return Num(token)
+        if token.type == PLUS:
+            self.eat(PLUS)
+            node = UnaryOp(token, self.factor())
+            return node
+        if token.type == MINUS:
+            self.eat(MINUS)
+            node = UnaryOp(token, self.factor())
+            return node
         if token.type == LPAREN:
             self.eat(LPAREN)
             node = self.expr()
             self.eat(RPAREN)
             return node
+
     def term(self):
         """term : factor (MULTIPLY | DIVIDE) factor)*"""
         node = self.factor()
@@ -162,7 +176,7 @@ class Parser(object):
         """
         expr   : term ((PLUS | MINUS) term)*
         term   : factor ((MULTIPLY | DIVIDE) factor)*
-        factor : INTEGER | LPAREN expr RPAREN
+        factor : (PLUS | MINUS)factor | INTEGER | LPAREN expr RPAREN
         """
         node = self.term()
 
@@ -196,6 +210,12 @@ class NodeVisitor(object):
 class Interpreter(NodeVisitor):
     def __init__(self, parser):
         self.parser = parser
+
+    def visit_UnaryOp(self, node):
+        if node.op.type == PLUS:
+            return +self.visit(node.expr)
+        elif node.op.type == MINUS:
+            return -self.visit(node.expr)
 
     def visit_BinOp(self, node):
         if node.op.type == PLUS:
