@@ -171,6 +171,25 @@ class Num(AST):
         self.token = token
         self.value = token.value
 
+class Compound(AST):
+    """Represents a BEGIN ... END block"""
+    def __init__(self):
+        self.children = []
+
+class Assign(AST):
+    def __init__(self, left, op, right):
+        self.left = left
+        self.token = self.op = op
+        self.right = right
+
+class Var(AST):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+class NoOp(AST):
+    pass
+
 class Parser(object):
     def __init__(self, lexer):
         self.lexer = lexer
@@ -187,7 +206,12 @@ class Parser(object):
             self.error()
 
     def factor(self):
-        """factor: (PLUS | MINUS)factor | INTEGER | LPAREN expr RPAREN"""
+        """factor: PLUS factor
+            | MINUS factor
+            | INTEGER
+            | LPAREN expr RPAREN
+            | variable
+        """
         token = self.current_token
         if token.type == INTEGER:
             self.eat(INTEGER)
@@ -204,6 +228,9 @@ class Parser(object):
             self.eat(LPAREN)
             node = self.expr()
             self.eat(RPAREN)
+            return node
+        else:
+            node = self.variable()
             return node
 
     def term(self):
@@ -237,7 +264,77 @@ class Parser(object):
         return node
 
     def parse(self):
-        return self.expr()
+        node = self.program()
+        if self.current_token.type != EOF:
+            self.error()
+        return node
+
+    def program(self):
+        """program : compound_statement DOT"""
+        node = self.compound_statement()
+        self.eat(DOT)
+        return node
+
+    def compound_statement(self):
+        """compound_statement : BEGIN statement_list END"""
+        self.eat(BEGIN)
+        nodes = self.statement_list()
+        self.eat(END)
+
+        root = Compound()
+        for node in nodes:
+            root.children.append(node)
+
+        return root
+
+    def statement_list(self):
+        """
+        statement_list : statement | statement SEMI statement_list
+        """
+        node = self.statement()
+        results = [node]
+        while self.current_token.type == SEMI:
+            self.eat(SEMI)
+            results.append(self.statement())
+        if self.current_token.type == ID:
+            self.error()
+
+        return results
+
+    def statement(self):
+        """
+        statement : compound_statement | assignment_statement | empty
+        """
+        if self.current_token.type == BEGIN:
+            node = self.compound_statement()
+        elif self.current_token.type == ID:
+            node = self.assignment_statement()
+        else:
+            node = self.empty()
+        return node
+
+    def assignment_statement(self):
+        """
+        assignment_statement : variable ASSIGN expr
+        """
+        left = self.variable()
+        token = self.current_token
+        self.eat(ASSIGN)
+        right = self.expr()
+        node = Assign(left, token, right)
+        return node
+
+    def variable(self):
+        """
+        variable : ID
+        """
+        node = Var(self.current_token)
+        self.eat(ID)
+        return node
+
+    def empty(self):
+        """An empty production"""
+        return NoOp()
 
 
 ###############################################################################
@@ -255,6 +352,9 @@ class NodeVisitor(object):
         raise Exception('No visit_{} method'.format(type(node).__name__))
 
 class Interpreter(NodeVisitor):
+
+    GLOBAL_SCOPE = {}
+    
     def __init__(self, parser):
         self.parser = parser
 
@@ -276,6 +376,25 @@ class Interpreter(NodeVisitor):
 
     def visit_Num(self, node):
         return node.value
+
+    def visit_Compound(self, node):
+        for child in node.children:
+            self.visit(child)
+
+    def visit_NoOp(self, node):
+        pass
+
+    def visit_Assign(self, node):
+        var_name = node.left.value
+        self.GLOBAL_SCOPE[var_name] = self.visit(node.right)
+
+    def visit_Var(self, node):
+        var_name = node.value
+        val = self.GLOBAL_SCOPE.get(var_name)
+        if val is None:
+            raise NameError(repr(var_name))
+        else:
+            return val
 
     def interpret(self):
         tree = self.parser.parse()
