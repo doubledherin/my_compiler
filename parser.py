@@ -1,16 +1,16 @@
 import token_names as tokens
 import abstract_syntax_tree as AST
 
+
 class Parser(object):
     def __init__(self, lexer):
         self.lexer = lexer
-        # set initial current token to first token in input
         self.current_token = self.lexer.get_next_token()
 
     def error(self):
         raise Exception('Invalid syntax')
 
-    def eat(self, token_type):
+    def consume(self, token_type):
         if self.current_token.type == token_type:
             self.current_token = self.lexer.get_next_token()
         else:
@@ -19,20 +19,20 @@ class Parser(object):
     def factor(self):
         token = self.current_token
         if token.type == tokens.INTEGER:
-            self.eat(tokens.INTEGER)
-            return AST.Num(token)
+            self.consume(tokens.INTEGER)
+            return AST.Number(token)
         if token.type == tokens.PLUS:
-            self.eat(tokens.PLUS)
-            node = AST.UnaryOp(token, self.factor())
+            self.consume(tokens.PLUS)
+            node = AST.UnaryOperator(token, self.factor())
             return node
         if token.type == tokens.MINUS:
-            self.eat(tokens.MINUS)
-            node = AST.UnaryOp(token, self.factor())
+            self.consume(tokens.MINUS)
+            node = AST.UnaryOperator(token, self.factor())
             return node
         if token.type == tokens.LPAREN:
-            self.eat(tokens.LPAREN)
+            self.consume(tokens.LPAREN)
             node = self.expr()
-            self.eat(tokens.RPAREN)
+            self.consume(tokens.RPAREN)
             return node
         else:
             node = self.variable()
@@ -45,10 +45,10 @@ class Parser(object):
         while self.current_token.type in (tokens.MULTIPLY, tokens.DIVIDE):
             token = self.current_token
             if token.type == tokens.MULTIPLY:
-                self.eat(tokens.MULTIPLY)
+                self.consume(tokens.MULTIPLY)
             elif token.type == tokens.DIVIDE:
-                self.eat(tokens.DIVIDE)
-            node = AST.BinOp(left=node, op=token, right=self.factor())
+                self.consume(tokens.DIVIDE)
+            node = AST.BinaryOperator(left=node, op=token, right=self.factor())
         return node
 
     def expr(self):
@@ -62,10 +62,10 @@ class Parser(object):
         while self.current_token.type in (tokens.PLUS, tokens.MINUS):
             token = self.current_token
             if token.type == tokens.PLUS:
-                self.eat(tokens.PLUS)
+                self.consume(tokens.PLUS)
             elif token.type == tokens.MINUS:
-                self.eat(tokens.MINUS)
-            node = AST.BinOp(left=node, op=token, right=self.term())
+                self.consume(tokens.MINUS)
+            node = AST.BinaryOperator(left=node, op=token, right=self.term())
         return node
 
     def parse(self):
@@ -77,14 +77,14 @@ class Parser(object):
     def program(self):
         """program : compound_statement BANG"""
         node = self.compound_statement()
-        self.eat(tokens.BANG)
+        self.consume(tokens.BANG)
         return node
 
     def compound_statement(self):
         """compound_statement : OPEN statement_list CLOSE"""
-        self.eat(tokens.OPEN)
+        self.consume(tokens.OPEN)
         nodes = self.statement_list()
-        self.eat(tokens.CLOSE)
+        self.consume(tokens.CLOSE)
 
         root = AST.Compound()
         for node in nodes:
@@ -99,7 +99,7 @@ class Parser(object):
         node = self.statement()
         results = [node]
         while self.current_token.type == tokens.SEMI:
-            self.eat(tokens.SEMI)
+            self.consume(tokens.SEMI)
             results.append(self.statement())
         if self.current_token.type == tokens.ID:
             self.error()
@@ -124,7 +124,7 @@ class Parser(object):
         """
         left = self.variable()
         token = self.current_token
-        self.eat(tokens.ASSIGN)
+        self.consume(tokens.ASSIGN)
         right = self.expr()
         node = AST.Assign(left, token, right)
         return node
@@ -134,7 +134,7 @@ class Parser(object):
         variable : ID
         """
         node = AST.Var(self.current_token)
-        self.eat(tokens.ID)
+        self.consume(tokens.ID)
         return node
 
     def empty(self):

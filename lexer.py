@@ -8,6 +8,7 @@ RESERVED_KEYWORDS = {
     'then': Token('THEN', 'then')
 }
 
+
 class Lexer(object):
     def __init__(self, text):
         # client string input, e.g. "3+5"
@@ -20,7 +21,7 @@ class Lexer(object):
         raise Exception('Invalid character')
 
     def advance(self):
-        self.pos +=1
+        self.pos += 1
         if self.pos > len(self.text) - 1:
             self.current_char = None
         else:
@@ -28,7 +29,7 @@ class Lexer(object):
 
     def peek(self):
         peek_pos = self.pos + 1
-        if peek_pos > len(self.text) -1:
+        if peek_pos > len(self.text) - 1:
             return None
         else:
             return self.text[peek_pos]

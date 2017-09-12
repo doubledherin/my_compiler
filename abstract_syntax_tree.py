@@ -1,37 +1,44 @@
-class AST(object):
+class AbstractSyntaxTree(object):
     pass
 
-class UnaryOp(AST):
+
+class UnaryOperator(AbstractSyntaxTree):
     def __init__(self, op, expr):
         self.token = self.op = op
         self.expr = expr
 
-class BinOp(AST):
+
+class BinaryOperator(AbstractSyntaxTree):
     def __init__(self, left, op, right):
         self.left = left
         self.token = self.op = op
         self.right = right
 
-class Num(AST):
+
+class Number(AbstractSyntaxTree):
     def __init__(self, token):
         self.token = token
         self.value = token.value
 
-class Compound(AST):
+
+class Compound(AbstractSyntaxTree):
     """Represents a '{ }' block"""
     def __init__(self):
         self.children = []
 
-class Assign(AST):
+
+class Assign(AbstractSyntaxTree):
     def __init__(self, left, op, right):
         self.left = left
         self.token = self.op = op
         self.right = right
 
-class Var(AST):
+
+class Var(AbstractSyntaxTree):
     def __init__(self, token):
         self.token = token
         self.value = token.value
 
-class NoOp(AST):
+
+class NoOp(AbstractSyntaxTree):
     pass
