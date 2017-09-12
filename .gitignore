@@ -1,1 +1,3 @@
-spi.pyc
+my_compiler_venv/
+*.pyc
+*.ipynb*
