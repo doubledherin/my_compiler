@@ -1,16 +1,14 @@
-INTEGER, PLUS, MINUS, MULTIPLY, DIVIDE, LPAREN, RPAREN, EOF, OPEN, CLOSE, BANG, ASSIGN, SEMI, ID = (
-    'INTEGER',
-    'PLUS',
-    'MINUS',
-    'MULTIPLY',
-    'DIVIDE',
-    'LPAREN',
-    'RPAREN',
-    'EOF',
-    'OPEN',
-    'CLOSE',
-    'BANG',
-    'ASSIGN',
-    'SEMI',
-    'ID'
-)
+ASSIGN   = 'ASSIGN'
+BANG     = 'BANG'
+CLOSE    = 'CLOSE'
+DIVIDE   = 'DIVIDE'
+EOF      = 'EOF'
+ID       = 'ID'
+INTEGER  = 'INTEGER'
+LPAREN   = 'LPAREN'
+MINUS    = 'MINUS'
+MULTIPLY = 'MULTIPLY'
+OPEN     = 'OPEN'
+PLUS     = 'PLUS'
+RPAREN   = 'RPAREN'
+SEMI     = 'SEMI'
