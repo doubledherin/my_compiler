@@ -1,4 +1,12 @@
-program : compound_statement BANG
+program : block BANG
+
+block : declarations compound_statement
+
+declarations : VAR (variable_declaration SEMI)+ | empty
+
+variable_declaration : ID (COMMA ID)* COLON type_spec
+
+type_spec: INTEGER
 
 compound_statement : OPEN statement_list CLOSE
 
@@ -15,7 +23,7 @@ empty :
 
 expr: term ((PLUS | MINUS) term)*
 
-term: factor ((MUL | DIV) factor)*
+term: factor ((MULTIPLY | DIVIDE) factor)*
 
 factor : PLUS factor
        | MINUS factor
@@ -24,3 +32,17 @@ factor : PLUS factor
        | variable
 
 variable: ID
+
+ASSIGN : "="
+BANG : "!"
+CLOSE : "}"
+DIVIDE : "/"
+ID : "ID"
+INTEGER : "INTEGER"
+LPAREN : "("
+MINUS : "-"
+MULTIPLY : "*"
+OPEN : "{"
+PLUS : "+"
+RPAREN : ")"
+SEMI : ";"
