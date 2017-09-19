@@ -1,7 +1,6 @@
 import token_names as tokens
 import abstract_syntax_tree as AST
 
-
 class Parser(object):
     def __init__(self, lexer):
         self.lexer = lexer
@@ -16,7 +15,93 @@ class Parser(object):
         else:
             self.error()
 
+    def program(self):
+        """
+        program : PROGRAM variable SEMI block BANG
+        """
+        self.consume(tokens.PROGRAM)
+        variable_node = self.variable()
+        program_name = variable_node.value
+        self.consume(tokens.SEMI)
+        block_node = self.block()
+        self.consume(tokens.BANG)
+        program_node = AST.Program(program_name, block_node)
+        return program_node
+
+    def block(self):
+        """
+        block : declarations compound_statement
+        """
+        declaration_nodes = self.declarations()
+        compound_statement_node = self.compound_statement()
+        block_node = AST.Block(declaration_nodes, compound_statement_node)
+        return block_node
+
+    def declarations(self):
+        """
+        declarations : VAR (variable_declaration SEMI)+
+                     | (FUNCTION ID SEMI BLOCK SEMI)*
+                     | empty
+        """
+        declarations = []
+        if self.current_token.type == tokens.VAR:
+            self.consume(tokens.VAR)
+            while self.current_token.type == tokens.ID:
+                declarations.extend(self.variable_declarations())
+                self.consume(tokens.SEMI)
+        if self.current_token.type == tokens.FUNCTION:
+            while self.current_token.type == tokens.FUNCTION:
+                function_name = self.current_token.name
+                self.consume(tokens.ID)
+                self.consume(tokens.SEMI)
+                block_node = self.block()
+                function_declaration = AST.FunctionDeclaration(function_name, block_node)
+                declarations.extend(function_declaration)
+        return declarations
+
+    def variable_declarations(self):
+        """
+        variable_declarations : ID (COMMA ID)* COLON type_spec
+        """
+        variable_nodes = []
+        variable_nodes.append(AST.Variable(self.current_token))
+        self.consume(tokens.ID)
+        while self.current_token.type == tokens.COMMA:
+            self.consume(tokens.COMMA)
+            variable_nodes.append(AST.Variable(self.current_token))
+            self.consume(tokens.ID)
+        self.consume(tokens.COLON)
+        type_node = self.type_spec()
+        variable_declarations = [
+            AST.VariableDeclaration(variable_node, type_node) for variable_node in variable_nodes
+        ]
+        return variable_declarations
+
+    def type_spec(self):
+        """
+        type_spec : INTEGER | REAL | STRING
+        """
+        token = self.current_token
+        if self.current_token.type == tokens.INTEGER:
+            self.consume(tokens.INTEGER)
+            return AST.Type(token)
+        elif self.current_token.type == tokens.REAL:
+            self.consume(tokens.REAL)
+            return AST.Type(token)
+        elif self.current_token.type == tokens.STRING:
+            self.consume(tokens.STRING)
+            return AST.Type(token)
+        else:
+            self.error()
+
     def factor(self):
+        """
+        factor : PLUS factor
+               | MINUS factor
+               | INTEGER
+               | LPAREN expr RPAREN
+               | variable
+        """
         token = self.current_token
         if token.type == tokens.INTEGER:
             self.consume(tokens.INTEGER)
@@ -39,7 +124,9 @@ class Parser(object):
             return node
 
     def term(self):
-        """term : factor (MULTIPLY | DIVIDE) factor)*"""
+        """
+        term : factor (MULTIPLY | DIVIDE) factor)*
+        """
         node = self.factor()
 
         while self.current_token.type in (tokens.MULTIPLY, tokens.DIVIDE):
@@ -53,9 +140,7 @@ class Parser(object):
 
     def expr(self):
         """
-        expr   : term ((PLUS | MINUS) term)*
-        term   : factor ((MULTIPLY | DIVIDE) factor)*
-        factor : (PLUS | MINUS)factor | INTEGER | LPAREN expr RPAREN
+        expr : term ((PLUS | MINUS) term)*
         """
         node = self.term()
 
@@ -68,17 +153,6 @@ class Parser(object):
             node = AST.BinaryOperator(left=node, op=token, right=self.term())
         return node
 
-    def parse(self):
-        node = self.program()
-        if self.current_token.type != tokens.EOF:
-            self.error()
-        return node
-
-    def program(self):
-        """program : compound_statement BANG"""
-        node = self.compound_statement()
-        self.consume(tokens.BANG)
-        return node
 
     def compound_statement(self):
         """compound_statement : OPEN statement_list CLOSE"""
@@ -133,10 +207,16 @@ class Parser(object):
         """
         variable : ID
         """
-        node = AST.Var(self.current_token)
+        node = AST.Variable(self.current_token)
         self.consume(tokens.ID)
         return node
 
     def empty(self):
         """An empty production"""
         return AST.NoOp()
+
+    def parse(self):
+        node = self.program()
+        if self.current_token.type != tokens.EOF:
+            self.error()
+        return node

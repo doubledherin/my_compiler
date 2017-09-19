@@ -1,12 +1,14 @@
-program : block BANG
+program : PROGRAM variable SEMI block BANG
 
 block : declarations compound_statement
 
-declarations : VAR (variable_declaration SEMI)+ | empty
+declarations : VAR (variable_declarations SEMI)+
+        | (FUNCTION ID SEMI BLOCK SEMI)*
+        | empty
 
-variable_declaration : ID (COMMA ID)* COLON type_spec
+variable_declarations : ID (COMMA ID)* COLON type_spec
 
-type_spec: INTEGER
+type_spec: INTEGER | REAL | STRING
 
 compound_statement : OPEN statement_list CLOSE
 

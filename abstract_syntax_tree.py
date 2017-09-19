@@ -1,5 +1,42 @@
+import json
+
 class AbstractSyntaxTree(object):
-    pass
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+            sort_keys=True, indent=4)
+
+
+class Program(AbstractSyntaxTree):
+    def __init__(self, program_name, block):
+        self.program_name = program_name
+        self.block = block
+
+
+class Block(AbstractSyntaxTree):
+    def __init__(self, declarations, compound_statement):
+        self.declarations = declarations
+        self.compound_statement = compound_statement
+
+class FunctionDeclaration(AbstractSyntaxTree):
+    def __init__(self, name, block):
+        self.name
+        self.block
+
+class Type(AbstractSyntaxTree):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+class VariableDeclaration(AbstractSyntaxTree):
+    def __init__(self, variable, type):
+        self.variable = variable
+        self.type = type
+
+
+class Variable(AbstractSyntaxTree):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
 
 
 class UnaryOperator(AbstractSyntaxTree):
@@ -32,12 +69,6 @@ class Assign(AbstractSyntaxTree):
         self.left = left
         self.token = self.op = op
         self.right = right
-
-
-class Var(AbstractSyntaxTree):
-    def __init__(self, token):
-        self.token = token
-        self.value = token.value
 
 
 class NoOp(AbstractSyntaxTree):

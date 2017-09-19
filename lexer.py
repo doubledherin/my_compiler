@@ -4,10 +4,14 @@ from token import Token
 RESERVED_KEYWORDS = {
     'OPEN': Token('OPEN', 'OPEN'),
     'CLOSE': Token('CLOSE', 'CLOSE'),
+    'PROGRAM': Token('PROGRAM', 'PROGRAM'),
+    'INTEGER': Token('INTEGER', 'INTEGER'),
+    'REAL': Token('REAL', 'REAL'),
+    'STRING': Token('STRING', 'STRING'),
+    'VAR': Token('VAR', 'VAR'),
     'if': Token('IF', 'if'),
     'then': Token('THEN', 'then')
 }
-
 
 class Lexer(object):
     def __init__(self, text):
@@ -65,6 +69,12 @@ class Lexer(object):
             if self.current_char == ';':
                 self.advance()
                 return Token(tokens.SEMI, ';')
+            if self.current_char == ',':
+                self.advance()
+                return Token(tokens.COMMA, ',')
+            if self.current_char == ':':
+                self.advance()
+                return Token(tokens.COLON, ':')
             if self.current_char == '!':
                 self.advance()
                 return Token(tokens.BANG, '!')
