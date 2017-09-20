@@ -17,15 +17,18 @@ class Block(AbstractSyntaxTree):
         self.declarations = declarations
         self.compound_statement = compound_statement
 
+
 class FunctionDeclaration(AbstractSyntaxTree):
     def __init__(self, name, block):
         self.name
         self.block
 
+
 class Type(AbstractSyntaxTree):
     def __init__(self, token):
         self.token = token
         self.value = token.value
+
 
 class VariableDeclaration(AbstractSyntaxTree):
     def __init__(self, variable, type):
