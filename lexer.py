@@ -2,15 +2,11 @@ import token_names as tokens
 from token import Token
 
 RESERVED_KEYWORDS = {
-    'OPEN': Token('OPEN', 'OPEN'),
-    'CLOSE': Token('CLOSE', 'CLOSE'),
     'PROGRAM': Token('PROGRAM', 'PROGRAM'),
     'INTEGER': Token('INTEGER', 'INTEGER'),
     'REAL': Token('REAL', 'REAL'),
     'STRING': Token('STRING', 'STRING'),
-    'VAR': Token('VAR', 'VAR'),
-    'if': Token('IF', 'if'),
-    'then': Token('THEN', 'then')
+    'VAR': Token('VAR', 'VAR')
 }
 
 class Lexer(object):
