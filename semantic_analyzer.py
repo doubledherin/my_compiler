@@ -98,6 +98,6 @@ class SemanticAnalyzer(NodeVisitor):
         self.visit(node.right)
         self.visit(node.left)
 
-    def visit_BinOp(self, node):
+    def visit_BinaryOperator(self, node):
         self.visit(node.left)
         self.visit(node.right)

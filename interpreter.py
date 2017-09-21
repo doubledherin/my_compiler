@@ -29,7 +29,7 @@ class Interpreter(NodeVisitor):
                 "Error: Symbol(identifier) not found '%s'" % var_name
             )
     def visit_VariableDeclaration(self, node):
-        type_symbol = BuiltInSymbol('INTEGER')
+        type_symbol = BuiltInSymbol('INTEGER') # TO DO: SET THIS DYNAMICALLY
         variable_name = node.variable.value
         variable_symbol = VariableSymbol(variable_name, type_symbol)
         if self.symbol_table.lookup(variable_name) is not None:
