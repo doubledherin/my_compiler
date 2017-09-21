@@ -39,10 +39,8 @@ class Lexer(object):
             self.advance()
 
     def skip_comment(self):
-        print "comment!"
         self.advance()
         while self.current_char is not None and self.current_char != "\n":
-            print "still comment"
             self.advance()
         self.advance
 
