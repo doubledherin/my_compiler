@@ -38,6 +38,14 @@ class Lexer(object):
         while self.current_char is not None and self.current_char.isspace():
             self.advance()
 
+    def skip_comment(self):
+        print "comment!"
+        self.advance()
+        while self.current_char is not None and self.current_char != "\n":
+            print "still comment"
+            self.advance()
+        self.advance
+
     def integer(self):
         result = ''
         while self.current_char is not None and self.current_char.isdigit():
@@ -76,6 +84,9 @@ class Lexer(object):
                 return Token(tokens.BANG, '!')
             if self.current_char.isspace():
                 self.skip_whitespace()
+                continue
+            if self.current_char == '#':
+                self.skip_comment()
                 continue
             if self.current_char.isdigit():
                 return Token(tokens.INTEGER, self.integer())
