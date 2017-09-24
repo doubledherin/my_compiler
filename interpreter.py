@@ -78,7 +78,6 @@
 #     def visit_Var(self, node):
 #         var_name = node.value
 #         val = self.symbol_table.get(var_name)
-#         print self.symbol_table
 #         if val is None:
 #             raise NameError(repr(var_name))
 #         else:

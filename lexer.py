@@ -58,7 +58,6 @@ class Lexer(object):
             result += self.current_char
             self.advance()
         token = RESERVED_KEYWORDS.get(result, Token(tokens.ID, result))
-        print token
         return token
 
     def get_next_token(self):
