@@ -51,12 +51,15 @@ class Parser(object):
                 self.consume(tokens.SEMI)
         if self.current_token.type == tokens.FUNCTION:
             while self.current_token.type == tokens.FUNCTION:
-                function_name = self.current_token.name
+                self.consume(tokens.FUNCTION)
+                function_name = self.current_token.value
                 self.consume(tokens.ID)
                 self.consume(tokens.SEMI)
                 block_node = self.block()
                 function_declaration = AST.FunctionDeclaration(function_name, block_node)
                 declarations.extend(function_declaration)
+        import pdb; pdb.set_trace()
+
         return declarations
 
     def variable_declarations(self):
@@ -79,7 +82,7 @@ class Parser(object):
 
     def type_spec(self):
         """
-        type_spec : INTEGER | REAL | STRING
+        type_spec : INTEGER | REAL
         """
         token = self.current_token
         if self.current_token.type == tokens.INTEGER:
@@ -87,9 +90,6 @@ class Parser(object):
             return AST.Type(token)
         elif self.current_token.type == tokens.REAL:
             self.consume(tokens.REAL)
-            return AST.Type(token)
-        elif self.current_token.type == tokens.STRING:
-            self.consume(tokens.STRING)
             return AST.Type(token)
         else:
             self.error()

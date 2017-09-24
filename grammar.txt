@@ -8,7 +8,7 @@ declarations : VAR (variable_declarations SEMI)+
 
 variable_declarations : ID (COMMA ID)* COLON type_spec
 
-type_spec: INTEGER | REAL | STRING
+type_spec: INTEGER | REAL
 
 compound_statement : OPEN statement_list CLOSE
 

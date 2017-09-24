@@ -36,6 +36,12 @@ class VariableDeclaration(AbstractSyntaxTree):
         self.type = type
 
 
+class FunctionDeclaration(AbstractSyntaxTree):
+    def __init__(self, name, block):
+        self.name
+        self.block
+
+
 class Variable(AbstractSyntaxTree):
     def __init__(self, token):
         self.token = token

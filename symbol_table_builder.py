@@ -43,3 +43,6 @@ class SymbolTableBuilder(NodeVisitor):
         variable_name = node.variable.value
         variable_symbol = VariableSymbol(variable_name, type_symbol)
         self.symbol_table.insert(variable_symbol)
+
+    def visit_FunctionDeclaration(self, node):
+        pass

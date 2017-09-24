@@ -5,8 +5,8 @@ RESERVED_KEYWORDS = {
     'PROGRAM': Token('PROGRAM', 'PROGRAM'),
     'INTEGER': Token('INTEGER', 'INTEGER'),
     'REAL': Token('REAL', 'REAL'),
-    'STRING': Token('STRING', 'STRING'),
-    'VAR': Token('VAR', 'VAR')
+    'VAR': Token('VAR', 'VAR'),
+    'FUNCTION': Token('FUNCTION', 'FUNCTION')
 }
 
 class Lexer(object):
@@ -58,6 +58,7 @@ class Lexer(object):
             result += self.current_char
             self.advance()
         token = RESERVED_KEYWORDS.get(result, Token(tokens.ID, result))
+        print token
         return token
 
     def get_next_token(self):
