@@ -6,14 +6,18 @@ class Parser(object):
         self.lexer = lexer
         self.current_token = self.lexer.get_next_token()
 
-    def error(self):
-        raise Exception('Invalid syntax')
+    def error(self, message):
+        raise Exception(message)
 
     def consume(self, token_type):
         if self.current_token.type == token_type:
+            print "Consuming {}".format(token_type)
             self.current_token = self.lexer.get_next_token()
         else:
-            self.error()
+            error_message = """
+                Trying to consume token type \'{}\' but current token type is \'{}\'
+            """.format(token_type, self.current_token.type)
+            self.error(error_message)
 
     def program(self):
         """
@@ -57,9 +61,7 @@ class Parser(object):
                 self.consume(tokens.SEMI)
                 block_node = self.block()
                 function_declaration = AST.FunctionDeclaration(function_name, block_node)
-                declarations.extend(function_declaration)
-        import pdb; pdb.set_trace()
-
+                declarations.append(function_declaration)
         return declarations
 
     def variable_declarations(self):
@@ -92,19 +94,23 @@ class Parser(object):
             self.consume(tokens.REAL)
             return AST.Type(token)
         else:
-            self.error()
+            self.error('Unexpected token type %s in type_spec function'.format(self.current_token.type))
 
     def factor(self):
         """
         factor : PLUS factor
                | MINUS factor
                | INTEGER
+               | REAL
                | LPAREN expr RPAREN
                | variable
         """
         token = self.current_token
         if token.type == tokens.INTEGER:
             self.consume(tokens.INTEGER)
+            return AST.Number(token)
+        if token.type == tokens.REAL:
+            self.consume(tokens.REAL)
             return AST.Number(token)
         if token.type == tokens.PLUS:
             self.consume(tokens.PLUS)
@@ -155,7 +161,7 @@ class Parser(object):
 
 
     def compound_statement(self):
-        """compound_statement : OPEN statement_list CLOSE"""
+        """compound_statement : OPEN statement_list CLOSE SEMI"""
         self.consume(tokens.OPEN)
         nodes = self.statement_list()
         self.consume(tokens.CLOSE)
@@ -176,7 +182,7 @@ class Parser(object):
             self.consume(tokens.SEMI)
             results.append(self.statement())
         if self.current_token.type == tokens.ID:
-            self.error()
+            self.error('Unexpected token type %s in statement_list function'.format(self.current_token.type))
 
         return results
 
@@ -218,5 +224,5 @@ class Parser(object):
     def parse(self):
         node = self.program()
         if self.current_token.type != tokens.EOF:
-            self.error()
+            self.error('Expected token type EOF but got %s'.format(self.current_token.type))
         return node

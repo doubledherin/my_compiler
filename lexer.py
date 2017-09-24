@@ -17,8 +17,8 @@ class Lexer(object):
         self.pos = 0
         self.current_char = self.text[self.pos]
 
-    def error(self):
-        raise Exception('Invalid character')
+    def error(self, message):
+        raise Exception(message)
 
     def advance(self):
         self.pos += 1
@@ -113,5 +113,5 @@ class Lexer(object):
             if self.current_char == '}':
                 self.advance()
                 return Token(tokens.CLOSE, '}')
-            self.error()
+            self.error('Unknown character %s found'.format(self.current_char))
         return Token(tokens.EOF, None)

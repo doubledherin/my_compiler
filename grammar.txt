@@ -10,7 +10,7 @@ variable_declarations : ID (COMMA ID)* COLON type_spec
 
 type_spec: INTEGER | REAL
 
-compound_statement : OPEN statement_list CLOSE
+compound_statement : OPEN statement_list CLOSE SEMI
 
 statement_list : statement
                | statement SEMI statement_list

@@ -20,8 +20,8 @@ class Block(AbstractSyntaxTree):
 
 class FunctionDeclaration(AbstractSyntaxTree):
     def __init__(self, name, block):
-        self.name
-        self.block
+        self.name = name
+        self.block = block
 
 
 class Type(AbstractSyntaxTree):
@@ -38,8 +38,8 @@ class VariableDeclaration(AbstractSyntaxTree):
 
 class FunctionDeclaration(AbstractSyntaxTree):
     def __init__(self, name, block):
-        self.name
-        self.block
+        self.name = name
+        self.block = block
 
 
 class Variable(AbstractSyntaxTree):
