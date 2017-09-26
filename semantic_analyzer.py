@@ -1,11 +1,11 @@
 from node_visitor import NodeVisitor
-from symbol_table import SymbolTable
+from scoped_symbol_table import ScopedSymbolTable
 from built_in_symbol import BuiltInSymbol
 from variable_symbol import VariableSymbol
 
 class SemanticAnalyzer(NodeVisitor):
     def __init__(self):
-        self.symbol_table = SymbolTable()
+        self.scope = ScopedSymbolTable(scope_name='global', scope_level=1)
 
     def visit_Block(self, node):
         for declaration in node.declarations:
@@ -24,18 +24,18 @@ class SemanticAnalyzer(NodeVisitor):
 
     def visit_VariableDeclaration(self, node):
         type_name = node.type.value
-        type_symbol = self.symbol_table.lookup(type_name)
+        type_symbol = self.scope.lookup(type_name)
         variable_name = node.variable.value
         variable_symbol = VariableSymbol(variable_name, type_symbol)
-        if self.symbol_table.lookup(variable_name) is not None:
+        if self.scope.lookup(variable_name) is not None:
             raise Exception(
                 'Duplicate declaration for variable %s found' % variable_name
         )
-        self.symbol_table.insert(variable_symbol)
+        self.scope.insert(variable_symbol)
 
     def visit_Variable(self, node):
         variable_name = node.value
-        variable_symbol = self.symbol_table.lookup(variable_name)
+        variable_symbol = self.scope.lookup(variable_name)
         if not variable_symbol:
             raise Exception(
                 "Error: variable %s is undeclared" % variable_name

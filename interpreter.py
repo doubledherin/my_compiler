@@ -4,7 +4,7 @@
 # from node_visitor import NodeVisitor
 # from built_in_symbol import BuiltInSymbol
 # from variable_symbol import VariableSymbol
-# from symbol_table import SymbolTable
+# from scoped_symbol_table import ScopedSymbolTable
 #
 # class Interpreter(NodeVisitor):
 #

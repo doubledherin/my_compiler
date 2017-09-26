@@ -37,8 +37,9 @@ class VariableDeclaration(AbstractSyntaxTree):
 
 
 class FunctionDeclaration(AbstractSyntaxTree):
-    def __init__(self, name, block):
+    def __init__(self, name, parameters, block):
         self.name = name
+        self.parameters = parameters
         self.block = block
 
 
@@ -82,3 +83,8 @@ class Assign(AbstractSyntaxTree):
 
 class NoOp(AbstractSyntaxTree):
     pass
+
+class Parameter(AbstractSyntaxTree):
+    def __init__(self, variable_node, type_node):
+        self.variable_node = variable_node
+        self.type_node = type_node

@@ -1,5 +1,5 @@
 from node_visitor import NodeVisitor
-from symbol_table import SymbolTable
+from scoped_symbol_table import ScopedSymbolTable
 from variable_symbol import VariableSymbol
 
 class SymbolTableBuilder(NodeVisitor):

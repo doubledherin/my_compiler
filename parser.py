@@ -11,6 +11,7 @@ class Parser(object):
 
     def consume(self, token_type):
         if self.current_token.type == token_type:
+            print "Consuming %s" % token_type
             self.current_token = self.lexer.get_next_token()
         else:
             error_message = """
@@ -41,27 +42,62 @@ class Parser(object):
         return block_node
 
     def declarations(self):
-        """
-        declarations : VAR (variable_declaration SEMI)+
-                     | (FUNCTION ID SEMI BLOCK SEMI)*
-                     | empty
+        """declarations : (VAR (variable_declaration SEMI)+)*
+                        | (PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
+                        | empty
         """
         declarations = []
-        if self.current_token.type == tokens.VAR:
-            self.consume(tokens.VAR)
-            while self.current_token.type == tokens.ID:
-                declarations.extend(self.variable_declarations())
-                self.consume(tokens.SEMI)
-        if self.current_token.type == tokens.FUNCTION:
-            while self.current_token.type == tokens.FUNCTION:
-                self.consume(tokens.FUNCTION)
-                function_name = self.current_token.value
-                self.consume(tokens.ID)
-                self.consume(tokens.SEMI)
-                block_node = self.block()
-                function_declaration = AST.FunctionDeclaration(function_name, block_node)
-                declarations.append(function_declaration)
+        while True:
+            if self.current_token.type == tokens.VAR:
+                self.consume(tokens.VAR)
+                while self.current_token.type == tokens.ID:
+                    declarations.extend(self.variable_declarations())
+                    self.consume(tokens.SEMI)
+            if self.current_token.type == tokens.FUNCTION:
+                while self.current_token.type == tokens.FUNCTION:
+                    self.consume(tokens.FUNCTION)
+                    function_name = self.current_token.value
+                    self.consume(tokens.ID)
+                    if self.current_token.type == tokens.LPAREN:
+                        self.consume(tokens.LPAREN)
+                        parameters = self.formal_parameter_list()
+                        self.consume(tokens.RPAREN)
+                    self.consume(tokens.SEMI)
+                    block_node = self.block()
+                    function_declaration = AST.FunctionDeclaration(function_name, parameters, block_node)
+                    declarations.append(function_declaration)
+            else:
+                break
         return declarations
+
+    def formal_parameter_list(self):
+        """ formal_parameter_list : formal_parameters
+                                  | formal_parameters SEMI formal_parameter_list
+        """
+        if not self.current_token.type == tokens.ID:
+            return []
+        parameter_nodes = self.formal_parameters()
+        while self.current_token.type == tokens.SEMI:
+            self.consume(tokens.SEMI)
+            parameter_nodes.extend(self.formal_parameters())
+        return parameter_nodes
+
+
+    def formal_parameters(self):
+        """ formal_parameters : ID (COMMA ID)* COLON type_spec """
+        parameter_nodes = []
+        parameter_tokens = [self.current_token]
+        self.consume(tokens.ID)
+        while self.current_token.type == tokens.COMMA:
+            self.consume(tokens.COMMA)
+            parameter_tokens.append(self.current_token)
+            self.consume(tokens.ID)
+        self.consume(tokens.COLON)
+        type_node = self.type_spec()
+        for token in parameter_tokens:
+            parameter_node = AST.Parameter(AST.Variable(token), type_node)
+            parameter_nodes.append(parameter_node)
+        return parameter_nodes
 
     def variable_declarations(self):
         """
@@ -160,7 +196,7 @@ class Parser(object):
 
 
     def compound_statement(self):
-        """compound_statement : OPEN statement_list CLOSE SEMI"""
+        """compound_statement : OPEN statement_list CLOSE"""
         self.consume(tokens.OPEN)
         nodes = self.statement_list()
         self.consume(tokens.CLOSE)
