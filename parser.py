@@ -246,5 +246,5 @@ class Parser(object):
     def parse(self):
         node = self.program()
         if self.current_token.type != tokens.EOF:
-            self.error('Expected token type EOF but got %s'.format(self.current_token.type))
+            self.error('Expected token type EOF but got %s' % self.current_token.type)
         return node

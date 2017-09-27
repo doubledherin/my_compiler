@@ -52,7 +52,6 @@ class Interpreter(NodeVisitor):
             self.visit(child)
 
     def visit_NoOp(self, node):
-        print "in visit_NoOp"
         pass
 
     def visit_Assign(self, node):
