@@ -37,7 +37,7 @@ class Parser(object):
 
     def declarations(self):
         """declarations : (var (variable_declaration SEMI)+)*
-                | (function ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
+                | (function ID (LPAREN formal_parameter_list RPAREN)? OPEN block CLOSE)*
                 | empty
         """
         declarations = []
@@ -57,7 +57,9 @@ class Parser(object):
                     self.consume(tokens.LPAREN)
                     parameters = self.formal_parameter_list()
                     self.consume(tokens.RPAREN)
+                self.consume(tokens.OPEN)
                 block_node = self.block()
+                self.consume(tokens.CLOSE)
                 function_declaration = AST.FunctionDeclaration(function_name, parameters, block_node)
                 declarations.append(function_declaration)
             else:
@@ -190,10 +192,8 @@ class Parser(object):
 
 
     def compound_statement(self):
-        """compound_statement : OPEN statement_list CLOSE"""
-        self.consume(tokens.OPEN)
+        """compound_statement : statement_list"""
         nodes = self.statement_list()
-        self.consume(tokens.CLOSE)
 
         root = AST.Compound()
         for node in nodes:
