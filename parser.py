@@ -43,8 +43,8 @@ class Parser(object):
 
     def declarations(self):
         """declarations : (VAR (variable_declaration SEMI)+)*
-                        | (PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
-                        | empty
+                | (FUNCTION ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
+                | empty
         """
         declarations = []
         while True:
@@ -53,19 +53,18 @@ class Parser(object):
                 while self.current_token.type == tokens.ID:
                     declarations.extend(self.variable_declarations())
                     self.consume(tokens.SEMI)
-            if self.current_token.type == tokens.FUNCTION:
-                while self.current_token.type == tokens.FUNCTION:
-                    self.consume(tokens.FUNCTION)
-                    function_name = self.current_token.value
-                    self.consume(tokens.ID)
-                    if self.current_token.type == tokens.LPAREN:
-                        self.consume(tokens.LPAREN)
-                        parameters = self.formal_parameter_list()
-                        self.consume(tokens.RPAREN)
-                    self.consume(tokens.SEMI)
-                    block_node = self.block()
-                    function_declaration = AST.FunctionDeclaration(function_name, parameters, block_node)
-                    declarations.append(function_declaration)
+            while self.current_token.type == tokens.FUNCTION:
+                self.consume(tokens.FUNCTION)
+                function_name = self.current_token.value
+                self.consume(tokens.ID)
+                if self.current_token.type == tokens.LPAREN:
+                    self.consume(tokens.LPAREN)
+                    parameters = self.formal_parameter_list()
+                    self.consume(tokens.RPAREN)
+                self.consume(tokens.SEMI)
+                block_node = self.block()
+                function_declaration = AST.FunctionDeclaration(function_name, parameters, block_node)
+                declarations.append(function_declaration)
             else:
                 break
         return declarations

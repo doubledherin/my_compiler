@@ -3,7 +3,7 @@ program : PROGRAM variable SEMI block BANG
 block : declarations compound_statement
 
 declarations : (VAR (variable_declaration SEMI)+)*
-                | (PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
+                | (FUNCTION ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
                 | empty
 
 variable_declarations : ID (COMMA ID)* COLON type_spec
