@@ -10,7 +10,6 @@ class ScopedSymbolTable():
         self._init_builtins()
 
     def _init_builtins(self):
-        self.insert(BuiltInSymbol('REAL'))
         self.insert(BuiltInSymbol('int'))
 
     def __str__(self):

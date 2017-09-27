@@ -115,14 +115,11 @@ class Parser(object):
 
     def type_spec(self):
         """
-        type_spec : int | REAL
+        type_spec : int
         """
         token = self.current_token
         if self.current_token.type == tokens.int:
             self.consume(tokens.int)
-            return AST.Type(token)
-        elif self.current_token.type == tokens.REAL:
-            self.consume(tokens.REAL)
             return AST.Type(token)
         else:
             self.error('Unexpected token type %s in type_spec function' % self.current_token.type)
@@ -132,16 +129,12 @@ class Parser(object):
         factor : PLUS factor
                | MINUS factor
                | int
-               | REAL
                | LPAREN expr RPAREN
                | variable
         """
         token = self.current_token
         if token.type == tokens.int:
             self.consume(tokens.int)
-            return AST.Number(token)
-        if token.type == tokens.REAL:
-            self.consume(tokens.REAL)
             return AST.Number(token)
         if token.type == tokens.PLUS:
             self.consume(tokens.PLUS)

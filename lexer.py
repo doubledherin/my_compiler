@@ -2,9 +2,7 @@ import token_names as tokens
 from token import Token
 
 RESERVED_KEYWORDS = {
-    'PROGRAM': Token('PROGRAM', 'PROGRAM'),
     'int': Token('int', 'int'),
-    'REAL': Token('REAL', 'REAL'),
     'var': Token('var', 'var'),
     'function': Token('function', 'function')
 }
