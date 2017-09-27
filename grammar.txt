@@ -1,21 +1,21 @@
-program : PROGRAM variable SEMI block BANG
+program : block
 
 block : declarations compound_statement
 
-declarations : (var (variable_declaration SEMI)+)*
-                | ('function' ID (LPAREN formal_parameter_list RPAREN)? block)*
+declarations : ('var' (variable_declaration SEMI)+)*
+                | ('function' ID (LPAREN formal_parameter_list RPAREN)? OPEN block CLOSE)*
                 | empty
 
 variable_declarations : ID (COMMA ID)* COLON type_spec
 
-type_spec: int
+type_spec: INTEGER | REAL
 
 formal_parameter_list : formal_parameters
                 | formal_parameters SEMI formal_parameter_list
 
 formal_parameters : ID (COMMA ID)* COLON type_spec
 
-compound_statement : OPEN statement_list CLOSE
+compound_statement : statement_list
 
 statement_list : statement
                | statement SEMI statement_list
@@ -34,22 +34,8 @@ term: factor ((MULTIPLY | DIVIDE) factor)*
 
 factor : PLUS factor
        | MINUS factor
-       | int
+       | INTEGER
        | LPAREN expr RPAREN
        | variable
 
 variable: ID
-
-ASSIGN : "="
-BANG : "!"
-CLOSE : "}"
-DIVIDE : "/"
-ID : "ID"
-int : "int"
-LPAREN : "("
-MINUS : "-"
-MULTIPLY : "*"
-OPEN : "{"
-PLUS : "+"
-RPAREN : ")"
-SEMI : ";"
