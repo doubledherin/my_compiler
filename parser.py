@@ -42,25 +42,26 @@ class Parser(object):
 
     def declarations(self):
         """declarations : (VAR (variable_declaration SEMI)+)*
-                | (FUNCTION ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
+                | (function ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
                 | empty
         """
         declarations = []
+        parameters = []
+
         while True:
             if self.current_token.type == tokens.VAR:
                 self.consume(tokens.VAR)
                 while self.current_token.type == tokens.ID:
                     declarations.extend(self.variable_declarations())
                     self.consume(tokens.SEMI)
-            while self.current_token.type == tokens.FUNCTION:
-                self.consume(tokens.FUNCTION)
+            while self.current_token.type == tokens.function:
+                self.consume(tokens.function)
                 function_name = self.current_token.value
                 self.consume(tokens.ID)
                 if self.current_token.type == tokens.LPAREN:
                     self.consume(tokens.LPAREN)
                     parameters = self.formal_parameter_list()
                     self.consume(tokens.RPAREN)
-                self.consume(tokens.SEMI)
                 block_node = self.block()
                 function_declaration = AST.FunctionDeclaration(function_name, parameters, block_node)
                 declarations.append(function_declaration)

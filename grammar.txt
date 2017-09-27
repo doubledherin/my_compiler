@@ -3,12 +3,17 @@ program : PROGRAM variable SEMI block BANG
 block : declarations compound_statement
 
 declarations : (VAR (variable_declaration SEMI)+)*
-                | (FUNCTION ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
+                | ('function' ID (LPAREN formal_parameter_list RPAREN)? block)*
                 | empty
 
 variable_declarations : ID (COMMA ID)* COLON type_spec
 
 type_spec: INTEGER | REAL
+
+formal_parameter_list : formal_parameters
+                | formal_parameters SEMI formal_parameter_list
+
+formal_parameters : ID (COMMA ID)* COLON type_spec
 
 compound_statement : OPEN statement_list CLOSE
 

@@ -6,7 +6,7 @@ RESERVED_KEYWORDS = {
     'INTEGER': Token('INTEGER', 'INTEGER'),
     'REAL': Token('REAL', 'REAL'),
     'VAR': Token('VAR', 'VAR'),
-    'FUNCTION': Token('FUNCTION', 'FUNCTION')
+    'function': Token('function', 'function')
 }
 
 class Lexer(object):
@@ -112,5 +112,5 @@ class Lexer(object):
             if self.current_char == '}':
                 self.advance()
                 return Token(tokens.CLOSE, '}')
-            self.error('Unknown character %s found'.format(self.current_char))
+            self.error('Unknown character %s found' % self.current_char)
         return Token(tokens.EOF, None)
