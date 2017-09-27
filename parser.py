@@ -41,7 +41,7 @@ class Parser(object):
         return block_node
 
     def declarations(self):
-        """declarations : (VAR (variable_declaration SEMI)+)*
+        """declarations : (var (variable_declaration SEMI)+)*
                 | (function ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
                 | empty
         """
@@ -49,8 +49,8 @@ class Parser(object):
         parameters = []
 
         while True:
-            if self.current_token.type == tokens.VAR:
-                self.consume(tokens.VAR)
+            if self.current_token.type == tokens.var:
+                self.consume(tokens.var)
                 while self.current_token.type == tokens.ID:
                     declarations.extend(self.variable_declarations())
                     self.consume(tokens.SEMI)
@@ -118,11 +118,11 @@ class Parser(object):
 
     def type_spec(self):
         """
-        type_spec : INTEGER | REAL
+        type_spec : int | REAL
         """
         token = self.current_token
-        if self.current_token.type == tokens.INTEGER:
-            self.consume(tokens.INTEGER)
+        if self.current_token.type == tokens.int:
+            self.consume(tokens.int)
             return AST.Type(token)
         elif self.current_token.type == tokens.REAL:
             self.consume(tokens.REAL)
@@ -134,14 +134,14 @@ class Parser(object):
         """
         factor : PLUS factor
                | MINUS factor
-               | INTEGER
+               | int
                | REAL
                | LPAREN expr RPAREN
                | variable
         """
         token = self.current_token
-        if token.type == tokens.INTEGER:
-            self.consume(tokens.INTEGER)
+        if token.type == tokens.int:
+            self.consume(tokens.int)
             return AST.Number(token)
         if token.type == tokens.REAL:
             self.consume(tokens.REAL)

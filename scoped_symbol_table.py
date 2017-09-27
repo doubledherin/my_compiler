@@ -11,7 +11,7 @@ class ScopedSymbolTable():
 
     def _init_builtins(self):
         self.insert(BuiltInSymbol('REAL'))
-        self.insert(BuiltInSymbol('INTEGER'))
+        self.insert(BuiltInSymbol('int'))
 
     def __str__(self):
             h1 = 'SCOPE (SCOPED SYMBOL TABLE)'

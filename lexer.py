@@ -3,9 +3,9 @@ from token import Token
 
 RESERVED_KEYWORDS = {
     'PROGRAM': Token('PROGRAM', 'PROGRAM'),
-    'INTEGER': Token('INTEGER', 'INTEGER'),
+    'int': Token('int', 'int'),
     'REAL': Token('REAL', 'REAL'),
-    'VAR': Token('VAR', 'VAR'),
+    'var': Token('var', 'var'),
     'function': Token('function', 'function')
 }
 
@@ -87,7 +87,7 @@ class Lexer(object):
                 self.skip_comment()
                 continue
             if self.current_char.isdigit():
-                return Token(tokens.INTEGER, self.integer())
+                return Token(tokens.int, self.integer())
             if self.current_char == '+':
                 self.advance()
                 return Token(tokens.PLUS, '+')
