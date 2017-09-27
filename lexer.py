@@ -85,7 +85,7 @@ class Lexer(object):
                 self.skip_comment()
                 continue
             if self.current_char.isdigit():
-                return Token(tokens.int, self.integer())
+                return Token(tokens.INT, self.integer())
             if self.current_char == '+':
                 self.advance()
                 return Token(tokens.PLUS, '+')

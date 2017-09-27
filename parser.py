@@ -44,13 +44,13 @@ class Parser(object):
         parameters = []
 
         while True:
-            if self.current_token.type == tokens.var:
-                self.consume(tokens.var)
+            if self.current_token.type == tokens.VAR:
+                self.consume(tokens.VAR)
                 while self.current_token.type == tokens.ID:
                     declarations.extend(self.variable_declarations())
                     self.consume(tokens.SEMI)
-            while self.current_token.type == tokens.function:
-                self.consume(tokens.function)
+            while self.current_token.type == tokens.FUNCTION:
+                self.consume(tokens.FUNCTION)
                 function_name = self.current_token.value
                 self.consume(tokens.ID)
                 if self.current_token.type == tokens.LPAREN:
@@ -118,8 +118,8 @@ class Parser(object):
         type_spec : int
         """
         token = self.current_token
-        if self.current_token.type == tokens.int:
-            self.consume(tokens.int)
+        if self.current_token.type == tokens.INT:
+            self.consume(tokens.INT)
             return AST.Type(token)
         else:
             self.error('Unexpected token type %s in type_spec function' % self.current_token.type)
@@ -133,8 +133,8 @@ class Parser(object):
                | variable
         """
         token = self.current_token
-        if token.type == tokens.int:
-            self.consume(tokens.int)
+        if token.type == tokens.INT:
+            self.consume(tokens.INT)
             return AST.Number(token)
         if token.type == tokens.PLUS:
             self.consume(tokens.PLUS)
