@@ -11,7 +11,6 @@ class Parser(object):
 
     def consume(self, token_type):
         if self.current_token.type == token_type:
-            print "Consuming %s" % token_type
             self.current_token = self.lexer.get_next_token()
         else:
             error_message = """
