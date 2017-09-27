@@ -8,7 +8,7 @@ declarations : ('var' (variable_declaration SEMI)+)*
 
 variable_declarations : ID (COMMA ID)* COLON type_spec
 
-type_spec: INTEGER | REAL
+type_spec: INTEGER
 
 formal_parameter_list : formal_parameters
                 | formal_parameters SEMI formal_parameter_list
