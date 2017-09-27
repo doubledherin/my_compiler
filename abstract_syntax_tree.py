@@ -7,8 +7,7 @@ class AbstractSyntaxTree(object):
 
 
 class Program(AbstractSyntaxTree):
-    def __init__(self, program_name, block):
-        self.program_name = program_name
+    def __init__(self, block):
         self.block = block
 
 

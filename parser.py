@@ -20,15 +20,10 @@ class Parser(object):
 
     def program(self):
         """
-        program : PROGRAM variable SEMI block BANG
+        program : block
         """
-        self.consume(tokens.PROGRAM)
-        variable_node = self.variable()
-        program_name = variable_node.value
-        self.consume(tokens.SEMI)
         block_node = self.block()
-        self.consume(tokens.BANG)
-        program_node = AST.Program(program_name, block_node)
+        program_node = AST.Program(block_node)
         return program_node
 
     def block(self):
@@ -128,7 +123,7 @@ class Parser(object):
             self.consume(tokens.REAL)
             return AST.Type(token)
         else:
-            self.error('Unexpected token type %s in type_spec function'.format(self.current_token.type))
+            self.error('Unexpected token type %s in type_spec function' % self.current_token.type)
 
     def factor(self):
         """
