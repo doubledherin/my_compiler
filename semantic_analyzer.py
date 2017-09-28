@@ -66,7 +66,7 @@ class SemanticAnalyzer(NodeVisitor):
         type_symbol = self.current_scope.lookup(type_name)
         variable_name = node.variable.value
         variable_symbol = VariableSymbol(variable_name, type_symbol)
-        if self.current_scope.lookup(variable_name) is not None:
+        if self.current_scope.lookup(variable_name, current_scope_only=True) is not None:
             raise Exception(
                 'Duplicate declaration for variable %s found' % variable_name
         )

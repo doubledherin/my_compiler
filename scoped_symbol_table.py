@@ -37,11 +37,15 @@ class ScopedSymbolTable():
         print('Inserting: %s into symbol table' % symbol.name)
         self._symbols[symbol.name] = symbol
 
-    def lookup(self, name):
+    def lookup(self, name, current_scope_only=False):
         print('Looking up: %s (Scope name: %s)' % (name, self.scope_name))
 
         symbol = self._symbols.get(name)
         if symbol is not None:
             return symbol
+
+        if current_scope_only:
+            return None
+
         if self.enclosing_scope is not None:
             return self.enclosing_scope.lookup(name)
