@@ -1,13 +1,13 @@
 var x, y, z : int;
 
-function foo (p, q : int; n, m : int) {
+function foo (p, q, n, m : int) {
     p = p + 5;
     q = q * 10;
     n = n - 4;
     m = m / 3;
 }
 
-function bar (r, s : int; t, u : int) {
+function bar (r, s, t, u : int) {
     r = r + 5;
     s = s * 10;
     t = t - 4;

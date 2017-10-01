@@ -2,20 +2,12 @@ from node_visitor import NodeVisitor
 import token_names as tokens
 from code import Code
 
-class BaseGenerator(NodeVisitor):
+class InstructionGenerator(NodeVisitor):
     def __init__(self):
         self.code = Code()
 
     def __call__(self, tree):
         self.visit(tree)
-        return self.code
-
-    def _visit_children(self, node):
-        for child in node.children:
-            print "visiting child", child
-            self.visit(child)
-
-class InstructionGenerator(BaseGenerator):
 
     def visit_Program(self, node):
         # print "in visit_Program"
