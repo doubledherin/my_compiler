@@ -47,13 +47,20 @@ class InstructionGenerator(BaseGenerator):
         print "in visit_BinaryOperator"
         if node.op.type == tokens.PLUS:
             self.code.instructions.append(('ADD_TWO_VALUES', None))
-            return self.visit(node.left) + self.visit(node.right)
+            self.visit(node.left)
+            self.visit(node.right)
         elif node.op.type == tokens.MINUS:
-            return self.visit(node.left) - self.visit(node.right)
+            self.code.instructions.append(('SUBTRACT_TWO_VALUES', None))
+            self.visit(node.left)
+            self.visit(node.right)
         elif node.op.type == tokens.MULTIPLY:
-            return self.visit(node.left) * self.visit(node.right)
+            self.code.instructions.append(('MULTIPLY_TWO_VALUES', None))
+            self.visit(node.left)
+            self.visit(node.right)
         elif node.op.type == tokens.DIVIDE:
-            return self.visit(node.left) / self.visit(node.right)
+            self.code.instructions.append(('DIVIDE_TWO_VALUES', None))
+            self.visit(node.left)
+            self.visit(node.right)
 
     def visit_Number(self, node):
         print "in visit_Number"

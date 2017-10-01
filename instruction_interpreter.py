@@ -20,10 +20,26 @@ class InstructionInterpreter(object):
         result = first + second
         self.stack.append(result)
 
-    def PRINT(self):
-        answer = self.stack[-1]
-        print answer
+    def SUBTRACT_TWO_VALUES(self):
+        first = self.stack.pop()
+        second = self.stack.pop()
+        result = first - second
+        self.stack.append(result)
 
+    def MULTIPLY_TWO_VALUES(self):
+        first = self.stack.pop()
+        second = self.stack.pop()
+        result = first * second
+        self.stack.append(result)
+
+    def DIVIDE_TWO_VALUES(self):
+        first = self.stack.pop()
+        second = self.stack.pop()
+        result = first / second
+        self.stack.append(result)
+
+    def PRINT(self):
+        print self.stack[-1]
 
     def parse_argument(self, instruction, argument, code_object):
         """ Understand what the argument to each instruction means."""
@@ -47,6 +63,12 @@ class InstructionInterpreter(object):
                 self.PUSH_VALUE(argument)
             elif instruction == "ADD_TWO_VALUES":
                 self.ADD_TWO_VALUES()
+            elif instruction == "SUBTRACT_TWO_VALUES":
+                self.SUBTRACT_TWO_VALUES()
+            elif instruction == "MULTIPLY_TWO_VALUES":
+                self.MULTIPLY_TWO_VALUES()
+            elif instruction == "DIVIDE_TWO_VALUES":
+                self.DIVIDE_TWO_VALUES()
             elif instruction == "PRINT":
                 self.PRINT()
             elif instruction == "ASSIGN":
