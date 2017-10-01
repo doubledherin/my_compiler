@@ -18,12 +18,11 @@ class InstructionInterpreter(object):
         second = self.stack.pop()
         first = self.stack.pop()
         result = first + second
-        self.stack.push(result)
+        self.stack.append(result)
 
-    def PRINT_ANSWER(self):
+    def PRINT(self):
         answer = self.stack[-1]
-
-        print answer, "!!!"
+        print answer
 
 
     def parse_argument(self, instruction, argument, code_object):
@@ -39,18 +38,17 @@ class InstructionInterpreter(object):
         return argument
 
     def run_code(self, code_object):
-        instructions = code_object.instructions
+        instructions = code_object.instructions[::-1]
         for each_step in instructions:
             instruction, argument = each_step
-            print "instruction: ", instruction, "argument: ", argument
             argument = self.parse_argument(instruction, argument, code_object)
 
             if instruction == "PUSH_VALUE":
                 self.PUSH_VALUE(argument)
             elif instruction == "ADD_TWO_VALUES":
                 self.ADD_TWO_VALUES()
-            elif instruction == "PRINT_ANSWER":
-                self.PRINT_ANSWER()
+            elif instruction == "PRINT":
+                self.PRINT()
             elif instruction == "ASSIGN":
                 self.ASSIGN(argument)
             elif instruction == "LOOKUP_AND_PUSH_VALUE":

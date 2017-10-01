@@ -29,7 +29,7 @@ class InstructionGenerator(BaseGenerator):
 
     def visit_Variable(self, node):
         print "in visit_Variable"
-        pass
+        self.code.instructions.append(('LOOKUP_AND_PUSH_VALUE', node.value))
 
     def visit_VariableDeclaration(self, node):
         print "in visit_VariableDeclaration"
