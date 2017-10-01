@@ -210,12 +210,17 @@ class Parser(object):
 
     def statement(self):
         """
-        statement : compound_statement | assignment_statement | empty
+        statement : compound_statement
+            | assignment_statement
+            | print_statement
+            | empty
         """
         if self.current_token.type == tokens.OPEN:
             node = self.compound_statement()
         elif self.current_token.type == tokens.ID:
             node = self.assignment_statement()
+        elif self.current_token.type == tokens.PRINT:
+            node = self.print_statement()
         else:
             node = self.empty()
         return node
@@ -229,6 +234,16 @@ class Parser(object):
         self.consume(tokens.ASSIGN)
         right = self.expr()
         node = AST.Assign(left, token, right)
+        return node
+
+    def print_statement(self):
+        """
+        print_statement : PRINT expr
+        """
+        token = self.current_token
+        self.consume(tokens.PRINT)
+        expr = self.expr()
+        node = AST.Print(token, expr)
         return node
 
     def variable(self):

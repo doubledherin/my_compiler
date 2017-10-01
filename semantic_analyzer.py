@@ -87,3 +87,7 @@ class SemanticAnalyzer(NodeVisitor):
     def visit_BinaryOperator(self, node):
         self.visit(node.left)
         self.visit(node.right)
+
+    # Not sure about this
+    def visit_Print(self, node):
+        self.visit(node.expr)

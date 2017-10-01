@@ -2,21 +2,20 @@ from node_visitor import NodeVisitor
 import token_names as tokens
 from code import Code
 
-
 class BaseGenerator(NodeVisitor):
     def __init__(self):
-        self.code_object = Code()
+        self.code = Code()
 
     def __call__(self, tree):
         self.visit(tree)
-        return self.code_object
+        return self.code
 
     def _visit_children(self, node):
         for child in node.children:
             print "visiting child", child
             self.visit(child)
 
-class BytecodeGenerator(BaseGenerator):
+class InstructionGenerator(BaseGenerator):
 
     def visit_Program(self, node):
         print "in visit_Program"
@@ -47,6 +46,7 @@ class BytecodeGenerator(BaseGenerator):
     def visit_BinaryOperator(self, node):
         print "in visit_BinaryOperator"
         if node.op.type == tokens.PLUS:
+            self.code.instructions.append(('ADD_TWO_VALUES', None))
             return self.visit(node.left) + self.visit(node.right)
         elif node.op.type == tokens.MINUS:
             return self.visit(node.left) - self.visit(node.right)
@@ -57,7 +57,9 @@ class BytecodeGenerator(BaseGenerator):
 
     def visit_Number(self, node):
         print "in visit_Number"
-        self.code_object.code.append(('LOAD_VALUE', node.value))
+        index = len(self.code.number_stack)
+        self.code.instructions.append(('PUSH_VALUE', index))
+        self.code.number_stack.append(node.value)
         return node.value
 
     def visit_Compound(self, node):
@@ -67,12 +69,18 @@ class BytecodeGenerator(BaseGenerator):
 
     def visit_NoOp(self, node):
         print "in visit_NoOp"
-        pass
+        return self.code
 
     def visit_Assign(self, node):
         print "in visit_Assign"
         self.visit(node.left)
         self.visit(node.right)
-        variable_name = node.left.value
-        self.code_object.code.append(('STORE_NAME', variable_name))
-        print self.code_object.code
+        index = len(self.code.name_stack)
+        name = node.left.value
+        self.code.instructions.append(('ASSIGN', index))
+        self.code.name_stack.append(name)
+
+    def visit_Print(self, node):
+        print "in visit_Print"
+        self.code.instructions.append(('PRINT', None))
+        self.visit(node.expr)

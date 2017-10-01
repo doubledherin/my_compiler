@@ -22,9 +22,12 @@ statement_list : statement
 
 statement : compound_statement
           | assignment_statement
+          | print_statement
           | empty
 
 assignment_statement : variable ASSIGN expr
+
+print_statement : PRINT expr
 
 empty :
 

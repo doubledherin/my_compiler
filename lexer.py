@@ -4,7 +4,8 @@ from token import Token
 RESERVED_KEYWORDS = {
     'int': Token('int', 'int'),
     'var': Token('var', 'var'),
-    'function': Token('function', 'function')
+    'function': Token('function', 'function'),
+    'print': Token('print', 'print'),
 }
 
 class Lexer(object):

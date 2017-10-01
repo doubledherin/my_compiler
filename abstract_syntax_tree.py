@@ -79,6 +79,10 @@ class Assign(AbstractSyntaxTree):
         self.token = self.op = op
         self.right = right
 
+class Print(AbstractSyntaxTree):
+    def __init__(self, token, expr):
+        self.token = token
+        self.expr = expr
 
 class NoOp(AbstractSyntaxTree):
     pass
