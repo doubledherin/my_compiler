@@ -74,6 +74,13 @@ def compile_sample_text():
     try:
         instruction_generator.visit(tree)
         print "Instruction generation successful!"
+        print "Would you like to see the instructions?"
+        answer = raw_input("y/n")
+        if answer == "y":
+            for instruction in instruction_generator.code.instructions[::-1]:
+                print instruction
+            print "numbers: ", instruction_generator.code.number_stack
+            print "names: ", instruction_generator.code.name_stack
     except:
         raise Exception('Error while generating instructions')
     print "Creating instruction interpreter..."
