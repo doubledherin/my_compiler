@@ -13,7 +13,7 @@ class ScopedSymbolTable():
         self.insert(BuiltInSymbol('int'))
 
     def __str__(self):
-            h1 = 'SCOPE (SCOPED SYMBOL TABLE)'
+            h1 = 'Scoped Symbol Table'
             lines = ['\n', h1, '=' * len(h1)]
             for header_name, header_value in (
                 ('Scope name', self.scope_name),
@@ -21,7 +21,7 @@ class ScopedSymbolTable():
                 ('Enclosing scope', self.enclosing_scope.scope_name if self.enclosing_scope else None),
             ):
                 lines.append('%-15s: %s' % (header_name, header_value))
-            h2 = 'Scope (Scoped symbol table) contents'
+            h2 = 'Contents'
             lines.extend([h2, '-' * len(h2)])
             lines.extend(
                 ('%7s: %r' % (key, value))
@@ -34,11 +34,11 @@ class ScopedSymbolTable():
     __repr__ = __str__
 
     def insert(self, symbol):
-        print('Inserting: %s into symbol table' % symbol.name)
+        # print('Inserting: %s into symbol table' % symbol.name)
         self._symbols[symbol.name] = symbol
 
     def lookup(self, name, current_scope_only=False):
-        print('Looking up: %s (Scope name: %s)' % (name, self.scope_name))
+        # print('Looking up: %s (Scope name: %s)' % (name, self.scope_name))
 
         symbol = self._symbols.get(name)
         if symbol is not None:

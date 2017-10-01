@@ -14,24 +14,27 @@ class SemanticAnalyzer(NodeVisitor):
         self.visit(node.compound_statement)
 
     def visit_Program(self, node):
-        print 'Entering global scope...'
+        # print 'Entering global scope...'
         global_scope = ScopedSymbolTable(
             scope_name='global',
-            scope_level=1,
+            scope_level=0,
             enclosing_scope=self.current_scope
         )
         self.current_scope = global_scope
         self.visit(node.block)
-        print global_scope
+        print "Global scope symbol table created. Would you like to view it?"
+        answer = raw_input('y/n')
+        if answer == 'y':
+            print global_scope
         self.current_scope = self.current_scope.enclosing_scope
-        print 'Leaving global scope...'
+        # print 'Leaving global scope...'
 
     def visit_FunctionDeclaration(self, node):
         function_name = node.name
         function_symbol = FunctionSymbol(function_name)
         self.current_scope.insert(function_symbol)
 
-        print 'Entering %s scope' % function_name
+        # print 'Entering %s scope' % function_name
         function_scope = ScopedSymbolTable(
             scope_name=function_name,
             scope_level=self.current_scope.scope_level + 1,
@@ -47,9 +50,12 @@ class SemanticAnalyzer(NodeVisitor):
             function_symbol.parameters.append(variable_symbol)
 
         self.visit(node.block)
-        print function_scope
+        print "Function scope %s symbol table created. Would you like to view it?" % function_name
+        answer = raw_input('y/n')
+        if answer == 'y':
+            print function_scope
         self.current_scope = self.current_scope.enclosing_scope
-        print 'Leaving %s scope' % function_name
+        # print 'Leaving %s scope' % function_name
 
     def visit_Compound(self, node):
         for child in node.children:

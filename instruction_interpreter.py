@@ -56,9 +56,8 @@ class InstructionInterpreter(object):
     def run_code(self, code_object):
         instructions = code_object.instructions[::-1]
         for each_step in instructions:
-            instruction, argument = each_step
-            argument = self.parse_argument(instruction, argument, code_object)
-
+            instruction, argument_index = each_step
+            argument = self.parse_argument(instruction, argument_index, code_object)
             if instruction == "PUSH_VALUE":
                 self.PUSH_VALUE(argument)
             elif instruction == "ADD_TWO_VALUES":
