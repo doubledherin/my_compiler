@@ -1,3 +1,5 @@
+Based on my learnings from Ruslan Spivak's blog (https://ruslanspivak.com/lsbasi-part1/) and Allison Kaptur's blogpost about the Bytecode project she contributed to (http://www.aosabook.org/en/500L/a-python-interpreter-written-in-python.html).
+
 # A toy compiler, written in Python
 * Lexes
 * Parses (generates abstract syntax tree
