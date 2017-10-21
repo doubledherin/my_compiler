@@ -1,4 +1,4 @@
-Based on my learnings from Ruslan Spivak's blog (https://ruslanspivak.com/lsbasi-part1/) and Allison Kaptur's blogpost about the Bytecode project she contributed to (http://www.aosabook.org/en/500L/a-python-interpreter-written-in-python.html).
+I was able to do this project based on my learnings from the [Bradfield CS class on compilers](https://bradfieldcs.com/courses/languages/), from [Ruslan Spivak's blog series](https://ruslanspivak.com/lsbasi-part1/) and [Allison Kaptur's blogpost about the Bytecode project](http://www.aosabook.org/en/500L/a-python-interpreter-written-in-python.html) she contributed to.
 
 # A toy compiler, written in Python
 * Lexes
